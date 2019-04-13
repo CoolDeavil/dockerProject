@@ -1,0 +1,64 @@
+version: '3.5'
+
+services:    
+  web:
+    build: ./dockerbuild/apacheFpm
+    restart: always
+    ports:
+     - 80:80
+     - 443:443
+    volumes:
+     - .:/var/www/html/application
+    networks:
+      app_net:
+        ipv4_address: 172.16.237.14
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - MYSQL_PASSWORD=root
+    links:
+      - web
+    ports:
+      - 8080:80
+    networks:
+     - app_net
+    restart: always
+
+  mysql:
+    image: mysql:5.7
+    restart: always
+    volumes:
+     - ./data:/var/lib/mysql
+    environment:
+     - MYSQL_ROOT_PASSWORD=root
+     - MYSQL_DATABASE=skeleton
+    links:
+     - web
+    networks:
+     - app_net
+
+  redis:
+    image: redis
+    volumes:
+      - redis:/data
+    ports:
+      - 6379:6379
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.16.237.0/24
+
+volumes:
+  redis: {}
+
+     
+
+
+
