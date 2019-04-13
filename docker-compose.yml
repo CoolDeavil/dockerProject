@@ -2,7 +2,7 @@ version: '3.5'
 
 services:    
   web:
-    build: ./dockerbuild/apacheFpm
+    build: ./Apache2FastCGI
     restart: always
     ports:
      - 80:80
